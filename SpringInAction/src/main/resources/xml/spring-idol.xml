@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd ">
+	
+	<!-- 第一位名为duke的杂技师 --> 
+	<!-- 无参构造函数注入，缺少无参构造函数，则报错 Failed to instantiate [com.springinaction.springidol.Juggler]: No default constructor found; -->
+<!-- 	<bean id="duke" class="com.springinaction.springidol.Juggler" /> -->
+	
+	<!-- 构造器注入 -->
+	<bean id="duke" class="com.springinaction.springidol.Juggler">
+		<constructor-arg value="15"></constructor-arg>
+	</bean>
+	
+	<!-- 朗诵诗歌的一个对象（这是一种能力，要给人使用） -->
+	<bean id="sonnet29" class="com.springinaction.springidol.Sonnet29" />
+	
+	<!-- 典型的通过构造器注入，包含基本类型和引用类型 -->
+	<bean id="poeticDuke" class="com.springinaction.springidol.PoeticJuggler">
+		<constructor-arg value="15"></constructor-arg>	<!-- poeticDuke不仅可以抛15个豆子（基本类型 value） -->
+		<constructor-arg ref="sonnet29"></constructor-arg>	<!-- poeticDuke还可以朗诵诗歌（对象 ref，将指定id的bean引用传递给PoeticJuggler类的构造器） -->
+	</bean>
+			     
+</beans>
