@@ -1,0 +1,43 @@
+java自带了多种XML命名空间，通过这些命名空间可以配置Spring容器
+aop:为声明切面以及将@AspectJ注解的类代理为Spring切面提供了配置元素
+beans:支持声明Bean和装配Bean,是Spring最核心也是最原始的命名空间
+context:为配置Spring应用上下文提供了配置元素，包括自动检测和装配bean、注入非Spring直接管理的对象
+jee:提供了与java ee api的集成，如jndi和ejb
+jms:为声明消息驱动的pojo提供了配置元素
+lang:支持配置由groovy、jruby、或beanshell等脚本实现的bean
+mvc:启用spring mvc的能力，例如面向注解的控制器、视图控制器和拦截器
+oxm:支持spring的对象到xml映射配置
+tx:提供声明式事务配置
+util:提供各种各样的工具类元素，包括把集合配置成bean，支持属性占位符元素
+
+
+<bean>元素是spring中最基本的配置单元，通过该元素spring将创建一个对象
+spring使用反射来创建bean
+
+构造函数注入
+bean元素指定 factory-method 通过一个静态方法注入
+
+所有的bean默认是单例的
+
+
+
+bean的作用域
+spring的bean作用域允许用户配置所创建的bean属于哪一种作用域，而无需在bean的实现里硬编码作用域规则
+singleton:在每一个spring容器中，bean默认单例（仅限于spring上下文）
+prototype:允许bean的定义可以被实例化任意次（每次调用都创建一个实例）
+request:在一次http请求中，每个bean定义对应一个实例。该作用域仅在基于Web的Spring上下文有效
+session:在一个httpSession中，每个bean定义对应一个实例。该作用域仅在基于Web的Spring上下文有效
+global-session:在一个全局HttpSession中，每个bean定义对应一个实例。该作用域仅在Portlet上下文有效
+
+
+spring声明周期
+init-method 初始化bean时要调用的方法
+destory-method bean从容器移除之前要调用的方法
+
+
+InitializingBean和DisposableBean
+spring能够自动检测实现了这些接口的Bean,缺点是和spring api有耦合
+
+default-init-method
+default-destroy-method
+给所有bean一个默认的init-method，destory-method
