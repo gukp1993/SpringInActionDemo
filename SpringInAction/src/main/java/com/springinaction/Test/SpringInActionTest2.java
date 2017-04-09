@@ -12,7 +12,7 @@ public class SpringInActionTest2 {
   public static void main(String[] args) {
     ApplicationContext ctx=new ClassPathXmlApplicationContext(location);//ClassPathXmlApplicationContext默认是classpath路径下
 //    String beanName="duke";
-    String beanName="poeticDuke";
+    String beanName="hank2";
     
     Performer performer=(Performer) ctx.getBean(beanName);//根据bean名字反射实例化对象
     performer.perform();

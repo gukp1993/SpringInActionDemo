@@ -1,3 +1,4 @@
+2.1声明bean
 java自带了多种XML命名空间，通过这些命名空间可以配置Spring容器
 aop:为声明切面以及将@AspectJ注解的类代理为Spring切面提供了配置元素
 beans:支持声明Bean和装配Bean,是Spring最核心也是最原始的命名空间
@@ -41,3 +42,111 @@ spring能够自动检测实现了这些接口的Bean,缺点是和spring api有�
 default-init-method
 default-destroy-method
 给所有bean一个默认的init-method，destory-method
+
+2.2注入bean属性
+setter方法注入
+内部bean，只适合一次注入，不能被复用
+
+spring命名空间p
+xmlns:p="http://www.springframework.org/schema/p"
+
+<property name="song" value="Jingle Bells" />
+<property name="instrument" ref="saxophone" />
+等价于
+p:song="Jingle Bells" p:instrument-ref="saxophone"
+
+
+装配集合
+java自带了多种集合类，Spring也提供了相应的集合配置元素
+<list> 装配list类型的值，允许重复
+<set> 装配set类型的值，不允许重复
+<map> 装配map类型的值，名称和值可以是任意类型
+<props> 装配properties类型的值，名称和值必须是String类型
+
+<!-- 只要bean的属性是java.util.Collection接口的任意实现，都能用<list>元素 -->
+<list>
+	<ref bean="saxophone"></ref>
+	<ref bean="piano"></ref>
+</list>
+<set> 
+	<ref bean="saxophone" /> 
+	<ref bean="piano" /> 
+</set>  
+<map>
+	<entry key="SAXOPHONE" value-ref="saxophone"></entry>
+	<entry key="PIANO" value-ref="piano"></entry>
+</map>
+
+
+<map>中的<entry>元素由一个键和一个值组成，键和值可以是简单类型，也可以是其他bean的引用
+key 			指定map中entry的键值为String
+key-ref 	指定map中entry的键为Spring上下文中其他Bean的引用
+value   	指定map中entry的值为String
+value-ref 指定map中entry的值为Spring上下文中其他Bean的引用
+
+
+装配空Bean
+显示的为属性装配null值
+<property name="someNonNullProperty"><null /></property>
+
+
+2.3使用表达式装配
+Spring3引入了Spring表达式语言（Spring Expression Language,SpEL）,SpEL是一种强大、简洁的装配bean
+的方式，它通过运行期执行的表达式将值装配到Bean的属性或构造器参数中
+SpEL拥有许多特性
+1.使用Bean的ID来引用Bean
+2.调用方法和访问对象的属性
+3.对值进行算数、关系和逻辑运算
+4.正则表达式匹配
+5.集合操作
+
+
+字面值
+<property name="count" value="#{5}" />
+整型5装配到count属性中
+#{}标记会提示Spring这个标记里的内容是SpEL表达式
+
+与非SpEL表达式的值混用
+<property name="message" value="The value is #{5}" />
+
+浮点
+#{89.7}
+科学计数法装配10000.0
+#{1e4}
+String类型的字面值
+#{'Chuck'}
+布尔型
+#{true} #{false}
+
+
+引用Bean、Properties和方法
+使用bean id将一个bean装配到另一个bean属性中
+<property name="instrument" value="#{saxophone}" />
+（等价于<property name="instrument" ref="saxophone" />）
+
+使用bean的引用来获取bean的属性
+<bean id="carl" class="com.springinaction.springidol.Instrumentalist">
+	<property name="song" value="#{kenny.song}" />
+</bean>
+注入Carl的song属性的表达式由两部分组成
+第一部分（dot分隔符之前,kenny），通过其id指向Kenny bean
+第二部分(song)指向kenny bean的song属性
+通过这种方式装配carl bean的song属性，其实等价于
+Instrumentalist carl=new Instrumentalist();//实例化carl
+carl.setSong(kenny.getSong());//kenny的域song的值赋值给carl
+
+不仅可以引用它的属性，还能调用它的方法
+例：有一个songSelector bean,它有一个selectSong()方法
+<property name="song" value="#{songSelector.selectSong()}" />
+就像写java代码一样，还可以
+#{songSelector.selectSong().toUpperCase()}
+
+String的toUpperCase()这个方法必须是调用对象不为null，如果为null就会抛出NullPointerException异常
+
+厉害了，SpEL有null-safe存取器
+#{songSelector.selectSong()?.toUpperCase()}
+如果songSelector.selectSong()返回null，则SpEL不会再去调用toUpperCase()方法
+
+
+操作类
+在SpEL中，使用T()运算符

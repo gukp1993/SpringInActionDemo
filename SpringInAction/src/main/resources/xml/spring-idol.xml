@@ -19,7 +19,54 @@
 	<!-- 典型的通过构造器注入，包含基本类型和引用类型 -->
 	<bean id="poeticDuke" class="com.springinaction.springidol.PoeticJuggler">
 		<constructor-arg value="15"></constructor-arg>	<!-- poeticDuke不仅可以抛15个豆子（基本类型 value） -->
-		<constructor-arg ref="sonnet29"></constructor-arg>	<!-- poeticDuke还可以朗诵诗歌（对象 ref，将指定id的bean引用传递给PoeticJuggler类的构造器） -->
+		<!--<constructor-arg ref="sonnet29"></constructor-arg>-->	<!-- poeticDuke还可以朗诵诗歌（对象 ref，将指定id的bean引用传递给PoeticJuggler类的构造器） -->
+		<!-- 构造函数注入内部bean -->
+		<constructor-arg>
+			<bean class="com.springinaction.springidol.Sonnet29"></bean>
+		</constructor-arg>
 	</bean>
+	
+	
+	<!-- 演奏家kenny -->
+	<bean id="kenny" class="com.springinaction.springidol.Instrumentalist">
+		<!-- 一旦kenny这个bean被实例化，spring就会调用property所指定属性（song）的setter方法为该属性注入值（Jingle Bells） -->
+	  <!-- spring将根据bean属性的类型自动判断value值的正确类型 -->
+		<property name="song" value="Jingle Bells"></property> 
+<!-- 		<property name="instrument" ref="saxophone"></property> -->
+<!-- 		<property name="instrument" ref="piano"></property> -->
+		<property name="instrument"><!-- 注入一个内部bean，只为kenny这个bean所用 -->
+			<bean class="com.springinaction.springidol.Saxophone"></bean>
+		</property>
+	</bean>
+	
+	<bean id="saxophone" class="com.springinaction.springidol.Saxophone"></bean>
+	<bean id="piano" class="com.springinaction.springidol.Piano"></bean>
+	
+	
+	<bean id="hank" class="com.springinaction.springidol.OneManBand">
+		<property name="instruments">
+			<!-- 只要bean的属性是java.util.Collection接口的任意实现，都能用<list>元素 -->
+			<list>
+				<ref bean="saxophone"></ref>
+				<ref bean="piano"></ref>
+			</list>
+<!-- 			<set> -->
+<!-- 				<ref bean="saxophone" /> -->
+<!-- 				<ref bean="piano" /> -->
+<!-- 			</set>  -->
+		</property>
+	</bean>
+	
+	
+	<bean id="hank2" class="com.springinaction.springidol.OneManBand2">
+		<property name="instruments">
+			<map>
+				<entry key="SAXOPHONE" value-ref="saxophone"></entry>
+				<entry key="PIANO" value-ref="piano"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	
 			     
 </beans>
