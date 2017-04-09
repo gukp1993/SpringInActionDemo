@@ -149,4 +149,68 @@ String的toUpperCase()这个方法必须是调用对象不为null，如果为nul
 
 
 操作类
-在SpEL中，使用T()运算符
+在SpEL中，使用T()运算符会调用类作用域的方法和常量
+T(java.lang.Math)
+返回一个java.lang.Math的类对象
+T()运算符真正的价值在于，通过该运算符可以访问指定类的静态方法和常量
+<property name="multiplier" value="#{T(java.lang.Math).PI}" />
+把PI装配到了mutiplier属性中
+
+T()调用方法
+T(java.lang.Math).random()，0-1的随机数装配到属性中
+
+
+SpEL提供了多种运算符，可以使用它们来对表达式进行求值
+算数运算符	 +，-，*，/,%,^
+关系运算符	<,>,==,<=,>=,lt,gt,eq,le,ge
+逻辑运算符	and,or,not,！
+条件运算符	?:
+正则表达式 	matches
+
+
+
+在SpEL中筛选集合
+例：定义一个
+public class City{
+	private String name;
+	private String state;
+	private int population;
+}
+
+使用<util:list>元素在Spring里配置一个包含City对象的List集合
+<util:list id="cities">
+	<bean class="xx.xx.City" p:name="Chicago" p:state="IL" p:population="2853114" />
+	<bean class="xx.xx.City" p:name="Atlanta" p:state="GA" p:population="537958" />
+</util:list>
+
+#{cities[0]}
+从集合中挑选出第一个city
+#{cities.size()}集合中元素的个数
+
+[]运算符会始终通过索引访问集合的成员
+[]运算符同样可以用来获取java.util.Map集合中的成员
+#{cities['Dallas']}
+
+
+查询集合成员
+如果我们想从City集合中查询人口多于100000的城市，
+在SpEL中使用运算符（.?[]）轻松做到
+<property name="bigCities" value="#{cities.?[population gt 100000]}" />
+查询运算符会创建一个新的集合，新的集合中只存放符合[]中表达式的成员
+
+SpEL同样提供两种其他的查询运算符：
+.^[]从集合中查询出第一个匹配项
+.$[]从集合中查询出最后一个匹配项
+
+
+投影集合
+集合投影是从集合的每一个成员中选择特定的属性放入一个新的集合中，投影运算符.![]
+<property name="cityNames" value="#{cities.![name+', '+state]}" />
+一个新的集合（拥有诸如"Chicago,IL"、"Atlanta,GA"这样的值）被装配到cityNames域中
+
+
+2.4小结
+	Spring容器是Spring框架的核心。Spring自带了多种容器的实现，但是它们可以归为两类。BeanFactory是最简单的容器，
+提供基础的依赖注入和Bean装配服务。当我们需要更高级的框架服务时，选择Spring的ApplicationContext作为容器更合适。
+	在Spring容器中装配Bean的最常见方式是使用XML文件。XML文件包含了应用中所有组件的配置信息，而Spring容器利用这些
+配置信息实现依赖注入，以便Bean能够与其所依赖的其他Bean相关联
