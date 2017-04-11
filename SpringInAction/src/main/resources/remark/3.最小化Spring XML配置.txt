@@ -15,3 +15,89 @@ byType自动装配的局限性，如果多个bean的类型与需要自动装配的属性的类型都匹配，spri
 			为了避免因为使用byType自动装配带来的歧义，标识一个首选bean，或者取消某个bean自动装配的候选资格
 
 首选bean， primary属性设为true(所有bean默认为true)
+
+当使用constructor自动装配策略时，我们必须让spring自动装配构造器的所有入参，不能混合使用constructor自动装配
+策略和<constructor-arg>元素
+
+
+3.2使用注解装配
+spring容器默认禁用注解装配，
+启用方式，使用spring的context命名空间配置中的<context:annotation-config>元素
+Spring3支持多种不同的用于自动装配的注解
+spring自带的@autowired注解
+jsr-330的@Inject注解
+jsr-250的@Resource注解
+
+
+使用@Autowired注解
+对set方法注解，注册bean不需要<property>元素，spring会对该方法执行byType自动装配
+对构造函数注解，不再需要<constructor-arg>元素配置bean
+对域直接注解，并删除setter方法（最常用的方式）
+
+@Autowired受限
+1.应用中必须只能有一个bean适合装配到@Autowired注解所标注的属性或者参数中
+
+可选的自动装配
+默认情况下，@Autowired具有强契约特征，其所标注的属性或者参数必须是可装配的。如果没有bean可以装配到@Autowired
+所标注的属性或参数中，自动装配就会失败（抛出NoSuchBeanDefinitionException）
+@Autowired(required=false)这样自动装配就是可选的，当没有找到可以装配的bean，所注解的属性值会设成null
+
+限定歧义性的依赖
+有多个满足装配条件的bean,spring无法选择装配哪个bean，同样抛出NoSuchBeanDefinitionException
+使用@Qualifier注解
+@Autowired
+@Qualifier("aa")
+只装配id为aa的bean
+
+我们还可以在bean上直接使用@Qualifier来缩小范围
+<bean class="xx.xx.xx">
+	<qualifier value="aa" />
+</bean>
+
+在bean上使用@Qualifier注解标注，然后使用@Autowired装配
+第一种更常用
+
+
+创建自定义的限定器
+自定义一个注解，把@Qualifier作为它的元注解，用自定义注解标注bean，进一步缩小bean范围（感觉没实用性）
+
+@Autowired注解会引入Spring依赖
+
+
+
+借助@Inject实现基于标准的自动装配
+为了统一各种依赖注入框架的编程模型，jcp发布了java依赖规范，jsr-330.
+
+和@Autowired一样，@Inject可以用来自动装配属性、方法和构造器，与@Autowired不同的是，@Inject没有
+required属性
+
+@Named注解的工作方式类似于@Qualifier，用于限定@Inject所标注的属性
+
+
+在注解中使用表达式
+spring3.0 @Value用于装配String类型和基本类型的值
+@Value与SpEL表达式结合，动态装配值
+
+
+3.3自动检测bean
+<context:component-scan>元素除了完成<context:annotation-config>一样的工作（启用注解装配bean）
+还允许spring自动检测bean和定义bean
+该元素中的base-package属性标识了扫描的包
+
+3.3.1位自动检测标注bean
+默认情况下，<context:component-scan>查找使用构造性注解所标注的类
+@Controller		标识将该类定义为Spring MVC controller
+@Service 			标识将该类定义为服务
+@Repository		标识将该类定义为数据仓库
+@Component		标识该类为Spring组件，通用的构造型注解
+所有使用@Component标注的自定义注解
+
+@Component默认扫描id为注解类名首字母小写
+@Component("aa")，显示的命名
+
+
+3.3.2过滤组件扫描
+
+
+
+
