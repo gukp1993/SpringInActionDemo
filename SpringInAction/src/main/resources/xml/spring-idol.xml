@@ -68,5 +68,14 @@
 	</bean>
 	
 	
+	<bean id="instrument" class="com.springinaction.springidol.Saxophone"></bean>
+	<!-- 在这里，Spring会发现instrument属性可以通过setter注入来进行自动装配，应用上下文中存在
+			 id为instrument的bean,该bean会被自动装配到instrument属性中 -->
+	<bean id="kenny_byName" class="com.springinaction.springidol.Instrumentalist" 
+		autowire="byName">
+		<property name="song" value="Jingle Bells"></property>
+	</bean>
+	
+	
 			     
 </beans>

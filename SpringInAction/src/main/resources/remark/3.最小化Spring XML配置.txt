@@ -1,0 +1,17 @@
+3.1自动装配bean属性
+
+4种类型的自动装配
+byName			把与bean的属性具有相同名字（或者id）的其他bean自动装配到bean的对应属性中。如果没有跟属性的名字相
+						匹配的bean，则该属性不进行装配
+byType			把与bean的属性具有相同类型的其他bean自动装配到bean的对应属性中。如果没有跟属性的类型相匹配的bean，
+						则该属性不被装配
+constructor	把与bean的构造器入参具有相同类型的其他bean自动装配到bean构造器的对应入参中
+autodetect	首先尝试使用constructor进行自动装配。如果失败，再尝试使用byType进行自动装配
+
+
+byName自动装配的缺点是需要假设bean的名字与其他bean的属性的名字一样
+byType自动装配的局限性，如果多个bean的类型与需要自动装配的属性的类型都匹配，spring会抛出异常
+			应用只允许存在一个bean与需要自动装配的属性类型相匹配
+			为了避免因为使用byType自动装配带来的歧义，标识一个首选bean，或者取消某个bean自动装配的候选资格
+
+首选bean， primary属性设为true(所有bean默认为true)
