@@ -97,7 +97,18 @@ spring3.0 @Value用于装配String类型和基本类型的值
 
 
 3.3.2过滤组件扫描
+<context:component-scan base-package="com.springinaction.springidol">
+	<context:include-filter type="assignable" 
+		expression="com.springinaction.springidol.Instrument" />
+</context:component-scan>
 
+<context:include-filter>的type和expression属性一起协作来定义组件扫描策略
+
+annotation	过滤器扫描使用指定注解所标注的那些类，通过expression属性指定要扫描的注解
+assignable	过滤器扫描派生于expression属性所指定类型的那些类
+aspectj			过滤器扫描与expression属性所指定的AspectJ表达式所匹配的那些类
+custom			使用自定义的org.springframework.core.type.TypeFilter实现类，该类由expression指定
+regex				过滤器扫描类的名称与expression属性所指定的正则表达式所匹配的那些类
 
 
 
